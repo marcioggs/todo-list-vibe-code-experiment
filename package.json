@@ -1,0 +1,9 @@
+{
+  "name": "todo-monorepo",
+  "private": true,
+  "scripts": {
+    "start": "./start.sh",
+    "test:backend": "mvn -f backend/pom.xml test",
+    "test:frontend": "npm --prefix frontend test"
+  }
+}

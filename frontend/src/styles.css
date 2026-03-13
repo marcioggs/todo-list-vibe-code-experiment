@@ -1,0 +1,21 @@
+:root {
+  color-scheme: light;
+  font-family: 'Avenir Next', 'Trebuchet MS', 'Segoe UI', sans-serif;
+  background:
+    radial-gradient(circle at top, rgba(255, 204, 150, 0.85), transparent 36%),
+    linear-gradient(135deg, #f7e7c8 0%, #f2b880 45%, #d46a43 100%);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  min-height: 100%;
+  margin: 0;
+}
+
+body {
+  color: #1f130a;
+}

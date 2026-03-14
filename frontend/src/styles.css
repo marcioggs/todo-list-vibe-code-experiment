@@ -1,9 +1,13 @@
 :root {
   color-scheme: light;
-  font-family: 'Avenir Next', 'Trebuchet MS', 'Segoe UI', sans-serif;
+  font-family: 'Google Sans', 'Product Sans', 'Segoe UI', sans-serif;
+  --surface: rgba(255, 255, 255, 0.92);
+  --surface-border: rgba(218, 220, 224, 0.9);
+  --surface-shadow: 0 10px 30px rgba(60, 64, 67, 0.08);
   background:
-    radial-gradient(circle at top, rgba(255, 204, 150, 0.85), transparent 36%),
-    linear-gradient(135deg, #f7e7c8 0%, #f2b880 45%, #d46a43 100%);
+    radial-gradient(circle at top left, rgba(26, 115, 232, 0.16), transparent 28%),
+    radial-gradient(circle at top right, rgba(251, 188, 4, 0.14), transparent 24%),
+    linear-gradient(180deg, #f8fbff 0%, #f1f3f4 100%);
 }
 
 * {
@@ -17,5 +21,5 @@ body {
 }
 
 body {
-  color: #1f130a;
+  color: #202124;
 }

@@ -1,59 +1,123 @@
-<main class="page-shell">
-  <section class="todo-card">
-    <header class="card-header">
-      <p class="eyebrow">Single List</p>
-      <h1>TODOs</h1>
-      <p class="subtitle">Add, edit, and remove plain-text items.</p>
+<main class="app-shell">
+  <section class="workspace">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">
+          <span class="blue"></span>
+          <span class="red"></span>
+          <span class="yellow"></span>
+          <span class="green"></span>
+        </div>
+        <div>
+          <p class="product-name">Tasks</p>
+          <p class="product-subtitle">Organized like a lightweight Google Workspace tool</p>
+        </div>
+      </div>
+
+      <div class="status-pill">
+        <span class="status-dot"></span>
+        <span>{{ store.items().length }} items</span>
+      </div>
     </header>
 
-    <form class="create-form" (ngSubmit)="addItem()">
-      <input
-        name="newItemText"
-        [ngModel]="newItemText()"
-        (ngModelChange)="newItemText.set($event)"
-        placeholder="What needs doing?"
-        autocomplete="off"
-      />
-      <button type="submit">Add</button>
-    </form>
+    <section class="hero-panel">
+      <div class="hero-copy">
+        <p class="eyebrow">Personal space</p>
+        <h1>Keep the day moving.</h1>
+        <p class="subtitle">
+          Capture a task, refine it quickly, and keep your list feeling calm and focused.
+        </p>
+      </div>
 
-    @if (store.error()) {
-      <p class="message error">{{ store.error() }}</p>
-    }
+      <div class="hero-metrics" aria-label="Task overview">
+        <article class="metric-card">
+          <span class="metric-label">Total tasks</span>
+          <strong>{{ store.items().length }}</strong>
+        </article>
+        <article class="metric-card">
+          <span class="metric-label">Status</span>
+          <strong>{{ store.loading() ? 'Syncing' : 'Ready' }}</strong>
+        </article>
+      </div>
+    </section>
 
-    @if (store.loading()) {
-      <p class="message">Working...</p>
-    }
+    <section class="content-grid">
+      <div class="composer-card">
+        <div class="section-heading">
+          <h2>Add a task</h2>
+          <p>Fast entry, clean layout, and clear actions.</p>
+        </div>
 
-    <ul class="todo-list">
-      @for (item of store.items(); track item.id) {
-        <li class="todo-item">
-          @if (editingId() === item.id) {
-            <div class="item-editor">
-              <input
-                name="editingText"
-                [ngModel]="editingText()"
-                (ngModelChange)="editingText.set($event)"
-                autocomplete="off"
-              />
-              <div class="item-actions">
-                <button type="button" class="secondary" (click)="saveEdit()">Save</button>
-                <button type="button" class="ghost" (click)="cancelEdit()">Cancel</button>
-              </div>
-            </div>
-          } @else {
-            <div class="item-view">
-              <span>{{ item.text }}</span>
-              <div class="item-actions">
-                <button type="button" class="secondary" (click)="startEdit(item.id, item.text)">Edit</button>
-                <button type="button" class="ghost" (click)="store.remove(item.id)">Delete</button>
-              </div>
-            </div>
+        <form class="create-form" (ngSubmit)="addItem()">
+          <label class="input-shell">
+            <span class="input-label">Task title</span>
+            <input
+              name="newItemText"
+              [ngModel]="newItemText()"
+              (ngModelChange)="newItemText.set($event)"
+              placeholder="What needs doing?"
+              autocomplete="off"
+            />
+          </label>
+          <button type="submit" class="primary-action">Add task</button>
+        </form>
+
+        @if (store.error()) {
+          <p class="message error">{{ store.error() }}</p>
+        }
+
+        @if (store.loading()) {
+          <p class="message">Working...</p>
+        }
+      </div>
+
+      <section class="list-card">
+        <div class="section-heading">
+          <h2>My list</h2>
+          <p>{{ store.items().length ? 'Everything currently in focus.' : 'Start with your first task.' }}</p>
+        </div>
+
+        <ul class="todo-list">
+          @for (item of store.items(); track item.id) {
+            <li class="todo-item">
+              @if (editingId() === item.id) {
+                <div class="item-editor">
+                  <label class="input-shell inline-editor">
+                    <span class="input-label">Edit task</span>
+                    <input
+                      name="editingText"
+                      [ngModel]="editingText()"
+                      (ngModelChange)="editingText.set($event)"
+                      autocomplete="off"
+                    />
+                  </label>
+                  <div class="item-actions">
+                    <button type="button" class="primary-action" (click)="saveEdit()">Save</button>
+                    <button type="button" class="text-action" (click)="cancelEdit()">Cancel</button>
+                  </div>
+                </div>
+              } @else {
+                <div class="item-view">
+                  <div class="item-copy">
+                    <span class="item-bullet" aria-hidden="true"></span>
+                    <span>{{ item.text }}</span>
+                  </div>
+                  <div class="item-actions">
+                    <button type="button" class="secondary-action" (click)="startEdit(item.id, item.text)">Edit</button>
+                    <button type="button" class="text-action danger" (click)="store.remove(item.id)">Delete</button>
+                  </div>
+                </div>
+              }
+            </li>
+          } @empty {
+            <li class="empty-state">
+              <div class="empty-illustration" aria-hidden="true"></div>
+              <h3>No tasks yet</h3>
+              <p>Add something above to start building your list.</p>
+            </li>
           }
-        </li>
-      } @empty {
-        <li class="empty-state">No items yet.</li>
-      }
-    </ul>
+        </ul>
+      </section>
+    </section>
   </section>
 </main>

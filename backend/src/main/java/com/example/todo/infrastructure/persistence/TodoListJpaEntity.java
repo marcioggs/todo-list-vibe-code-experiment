@@ -8,18 +8,15 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "todo_items")
-public class TodoItemJpaEntity {
+@Table(name = "todo_lists")
+public class TodoListJpaEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
   @Column(nullable = false, length = 255)
-  private String text;
-
-  @Column(name = "list_id", nullable = false)
-  private Long listId;
+  private String title;
 
   public Long getId() {
     return id;
@@ -29,19 +26,11 @@ public class TodoItemJpaEntity {
     this.id = id;
   }
 
-  public String getText() {
-    return text;
+  public String getTitle() {
+    return title;
   }
 
-  public void setText(String text) {
-    this.text = text;
-  }
-
-  public Long getListId() {
-    return listId;
-  }
-
-  public void setListId(Long listId) {
-    this.listId = listId;
+  public void setTitle(String title) {
+    this.title = title;
   }
 }

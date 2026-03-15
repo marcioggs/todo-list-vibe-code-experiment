@@ -40,6 +40,8 @@ You are an expert in TypeScript, Angular, and scalable web application developme
 - Use `computed()` for derived state
 - Keep state transformations pure and predictable
 - Do NOT use `mutate` on signals, use `update` or `set` instead
+- Effects should be the last API you reach for. Always prefer computed() for derived values and linkedSignal()
+  for values that can be both derived and manually set. Effects are best for syncing signal state to imperative, non-signal APIs.
 
 ## Templates
 

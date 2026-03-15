@@ -17,7 +17,8 @@ public class TodoListService {
   private final TodoListRepository todoListRepository;
   private final TodoItemRepository todoItemRepository;
 
-  public TodoListService(TodoListRepository todoListRepository, TodoItemRepository todoItemRepository) {
+  public TodoListService(
+      TodoListRepository todoListRepository, TodoItemRepository todoItemRepository) {
     this.todoListRepository = todoListRepository;
     this.todoItemRepository = todoItemRepository;
   }
@@ -27,7 +28,8 @@ public class TodoListService {
     List<TodoList> lists = todoListRepository.findAllOrderById();
     Map<Long, List<TodoItem>> itemsByList =
         todoItemRepository.findAllOrderByListIdAndId().stream()
-            .collect(Collectors.groupingBy(TodoItem::listId, LinkedHashMap::new, Collectors.toList()));
+            .collect(
+                Collectors.groupingBy(TodoItem::listId, LinkedHashMap::new, Collectors.toList()));
     return lists.stream()
         .map(
             list ->
@@ -46,7 +48,8 @@ public class TodoListService {
   public TodoListWithItems update(Long id, String title) {
     todoListRepository.findById(id).orElseThrow(() -> new TodoListNotFoundException(id));
     TodoList saved = todoListRepository.save(new TodoList(id, title));
-    return new TodoListWithItems(saved.id(), saved.title(), todoItemRepository.findAllByListIdOrderById(id));
+    return new TodoListWithItems(
+        saved.id(), saved.title(), todoItemRepository.findAllByListIdOrderById(id));
   }
 
   @Transactional

@@ -3,5 +3,4 @@ package com.example.todo.interfaces.rest;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-public record TodoItemRequest(@NotBlank @Size(max = 255) String text) {
-}
+public record TodoItemRequest(@NotBlank @Size(max = 255) String text) {}

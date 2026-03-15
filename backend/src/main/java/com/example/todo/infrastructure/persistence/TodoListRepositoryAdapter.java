@@ -34,7 +34,8 @@ public class TodoListRepositoryAdapter implements TodoListRepository {
       entity =
           repository
               .findById(todoList.id())
-              .orElseThrow(() -> new IllegalStateException("Todo list " + todoList.id() + " was not found"));
+              .orElseThrow(
+                  () -> new IllegalStateException("Todo list " + todoList.id() + " was not found"));
     }
     entity.setTitle(todoList.title());
     return toDomain(repository.save(entity));

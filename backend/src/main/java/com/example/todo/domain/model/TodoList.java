@@ -1,6 +1,5 @@
 package com.example.todo.domain.model;
 
-import java.util.Objects;
 
 public record TodoList(Long id, String title) {
 

@@ -14,11 +14,13 @@ public class RestExceptionHandler {
 
   @ExceptionHandler({TodoItemNotFoundException.class, TodoListNotFoundException.class})
   public ResponseEntity<Map<String, String>> handleNotFound(RuntimeException exception) {
-    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", exception.getMessage()));
+    return ResponseEntity.status(HttpStatus.NOT_FOUND)
+        .body(Map.of("message", exception.getMessage()));
   }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
-  public ResponseEntity<Map<String, String>> handleValidation(MethodArgumentNotValidException exception) {
+  public ResponseEntity<Map<String, String>> handleValidation(
+      MethodArgumentNotValidException exception) {
     var fieldError = exception.getBindingResult().getFieldError();
     String field = fieldError != null ? fieldError.getField() : "";
     String message =

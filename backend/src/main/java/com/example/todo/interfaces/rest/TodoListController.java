@@ -4,8 +4,8 @@ import com.example.todo.application.TodoItemService;
 import com.example.todo.application.TodoListService;
 import com.example.todo.application.TodoListWithItems;
 import com.example.todo.domain.model.TodoItem;
-import java.util.List;
 import jakarta.validation.Valid;
+import java.util.List;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,7 +38,8 @@ public class TodoListController {
   }
 
   @PutMapping("/{id}")
-  public TodoListResponse update(@PathVariable Long id, @Valid @RequestBody TodoListRequest request) {
+  public TodoListResponse update(
+      @PathVariable Long id, @Valid @RequestBody TodoListRequest request) {
     return toResponse(todoListService.update(id, request.title()));
   }
 
@@ -68,9 +69,7 @@ public class TodoListController {
 
   private TodoListResponse toResponse(TodoListWithItems list) {
     return new TodoListResponse(
-        list.id(),
-        list.title(),
-        list.items().stream().map(this::toItemResponse).toList());
+        list.id(), list.title(), list.items().stream().map(this::toItemResponse).toList());
   }
 
   private TodoItemResponse toItemResponse(TodoItem todoItem) {

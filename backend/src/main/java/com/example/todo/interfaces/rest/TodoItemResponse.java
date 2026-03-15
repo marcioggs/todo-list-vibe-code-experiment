@@ -1,4 +1,3 @@
 package com.example.todo.interfaces.rest;
 
-public record TodoItemResponse(Long id, String text) {
-}
+public record TodoItemResponse(Long id, Long listId, String text) {}

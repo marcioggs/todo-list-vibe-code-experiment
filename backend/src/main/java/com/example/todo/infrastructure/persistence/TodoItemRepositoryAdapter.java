@@ -16,8 +16,13 @@ public class TodoItemRepositoryAdapter implements TodoItemRepository {
   }
 
   @Override
-  public List<TodoItem> findAllOrderById() {
-    return repository.findAllByOrderByIdAsc().stream().map(this::toDomain).toList();
+  public List<TodoItem> findAllByListIdOrderById(Long listId) {
+    return repository.findByListIdOrderByIdAsc(listId).stream().map(this::toDomain).toList();
+  }
+
+  @Override
+  public List<TodoItem> findAllOrderByListIdAndId() {
+    return repository.findAllByOrderByListIdAscIdAsc().stream().map(this::toDomain).toList();
   }
 
   @Override
@@ -30,6 +35,7 @@ public class TodoItemRepositoryAdapter implements TodoItemRepository {
     TodoItemJpaEntity entity = new TodoItemJpaEntity();
     entity.setId(todoItem.id());
     entity.setText(todoItem.text());
+    entity.setListId(todoItem.listId());
     return toDomain(repository.save(entity));
   }
 
@@ -38,7 +44,12 @@ public class TodoItemRepositoryAdapter implements TodoItemRepository {
     repository.deleteById(id);
   }
 
+  @Override
+  public void deleteByListId(Long listId) {
+    repository.deleteAllByListId(listId);
+  }
+
   private TodoItem toDomain(TodoItemJpaEntity entity) {
-    return new TodoItem(entity.getId(), entity.getText());
+    return new TodoItem(entity.getId(), entity.getListId(), entity.getText());
   }
 }

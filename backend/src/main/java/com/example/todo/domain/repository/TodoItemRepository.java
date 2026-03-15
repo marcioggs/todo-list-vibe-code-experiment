@@ -6,11 +6,15 @@ import java.util.Optional;
 
 public interface TodoItemRepository {
 
-  List<TodoItem> findAllOrderById();
+  List<TodoItem> findAllByListIdOrderById(Long listId);
+
+  List<TodoItem> findAllOrderByListIdAndId();
 
   Optional<TodoItem> findById(Long id);
 
   TodoItem save(TodoItem todoItem);
 
   void deleteById(Long id);
+
+  void deleteByListId(Long listId);
 }

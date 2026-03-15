@@ -1,0 +1,62 @@
+@if (store.selectedList()) {
+  <header class="card-header">
+    <p class="eyebrow">Active list</p>
+    <h1>{{ store.selectedList()?.title }}</h1>
+    <p class="subtitle">Add, edit, and remove plain-text items.</p>
+  </header>
+
+  <form class="rename-form" (ngSubmit)="renameList()">
+    <input
+      name="selectedListTitle"
+      [ngModel]="store.selectedListTitle()"
+      (ngModelChange)="store.selectedListTitle.set($event)"
+      placeholder="List title"
+      autocomplete="off"
+    />
+    <button type="submit">Rename</button>
+  </form>
+
+  <form class="create-form" (ngSubmit)="addItem()">
+    <input
+      name="newItemText"
+      [ngModel]="newItemText()"
+      (ngModelChange)="newItemText.set($event)"
+      placeholder="What needs doing?"
+      autocomplete="off"
+    />
+    <button type="submit">Add</button>
+  </form>
+
+  <ul class="todo-list">
+    @for (item of store.selectedItems(); track item.id) {
+      <li class="todo-item">
+        @if (editingId() === item.id) {
+          <div class="item-editor">
+            <input
+              name="editingText"
+              [ngModel]="editingText()"
+              (ngModelChange)="editingText.set($event)"
+              autocomplete="off"
+            />
+            <div class="item-actions">
+              <button type="button" class="secondary" (click)="saveEdit()">Save</button>
+              <button type="button" class="ghost" (click)="cancelEdit()">Cancel</button>
+            </div>
+          </div>
+        } @else {
+          <div class="item-view">
+            <span>{{ item.text }}</span>
+            <div class="item-actions">
+              <button type="button" class="secondary" (click)="startEdit(item.id, item.text)">Edit</button>
+              <button type="button" class="ghost" (click)="removeItem(item.id)">Delete</button>
+            </div>
+          </div>
+        }
+      </li>
+    } @empty {
+      <li class="empty-state">No items yet.</li>
+    }
+  </ul>
+} @else {
+  <p class="message empty-hint">List not found.</p>
+}

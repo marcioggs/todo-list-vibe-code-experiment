@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { signal } from '@angular/core';
+import { RouterTestingModule } from '@angular/router/testing';
 import { vi } from 'vitest';
 import { App } from './app';
 import { TodoStoreService } from './todo-store.service';
@@ -12,6 +13,8 @@ const todoStoreStub = {
   selectedItems: signal([]),
   loading: signal(false),
   error: signal(''),
+  lastCreatedListId: signal<number | null>(null),
+  resetLastCreatedListId: vi.fn(),
   load: vi.fn(),
   createList: vi.fn(),
   selectList: vi.fn(),
@@ -32,9 +35,10 @@ describe('App', () => {
     todoStoreStub.add.mockReset();
     todoStoreStub.update.mockReset();
     todoStoreStub.remove.mockReset();
+    todoStoreStub.resetLastCreatedListId.mockReset();
 
     await TestBed.configureTestingModule({
-      imports: [App],
+      imports: [App, RouterTestingModule.withRoutes([])],
       providers: [{ provide: TodoStoreService, useValue: todoStoreStub }]
     }).compileComponents();
   });

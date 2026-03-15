@@ -13,6 +13,7 @@ export class TodoStoreService {
   readonly loading = signal(false);
   readonly error = signal('');
   readonly selectedListTitle = signal('');
+  readonly lastCreatedListId = signal<number | null>(null);
 
   readonly selectedList = computed(() =>
     this.lists().find((list) => list.id === this.selectedListId()) ?? null
@@ -35,21 +36,18 @@ export class TodoStoreService {
             return;
           }
           const current = this.selectedListId();
-          const nextId =
-            current && lists.some((list) => list.id === current) ? current : lists[0].id;
-          this.selectList(nextId, lists);
+          if (current !== null) {
+            this.selectList(current, lists);
+          }
         },
         error: () => this.error.set('Could not load TODO lists.')
       });
   }
 
-  selectList(id: number, lists = this.lists()): void {
-    const next = lists.find((list) => list.id === id);
-    if (!next) {
-      return;
-    }
+  selectList(id: number | null, lists = this.lists()): void {
     this.selectedListId.set(id);
-    this.selectedListTitle.set(next.title);
+    const next = lists.find((list) => list.id === id);
+    this.selectedListTitle.set(next?.title ?? '');
   }
 
   createList(title: string): void {
@@ -66,6 +64,7 @@ export class TodoStoreService {
       .subscribe({
         next: (list) => {
           this.lists.update((lists) => [...lists, list]);
+          this.lastCreatedListId.set(list.id);
           this.selectList(list.id);
         },
         error: () => this.error.set('Could not create the list.')
@@ -100,18 +99,13 @@ export class TodoStoreService {
       .deleteList(id)
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
-        next: () => {
-          this.lists.update((lists) => lists.filter((list) => list.id !== id));
-          if (wasSelected) {
-            const remaining = this.lists();
-            if (remaining.length) {
-              this.selectList(remaining[0].id);
-            } else {
+          next: () => {
+            this.lists.update((lists) => lists.filter((list) => list.id !== id));
+            if (wasSelected) {
               this.selectedListId.set(null);
               this.selectedListTitle.set('');
             }
-          }
-        },
+          },
         error: () => this.error.set('Could not delete the list.')
       });
   }
@@ -182,6 +176,10 @@ export class TodoStoreService {
         },
         error: () => this.error.set('Could not remove the TODO item.')
       });
+  }
+
+  resetLastCreatedListId(): void {
+    this.lastCreatedListId.set(null);
   }
 
   private updateListState(updated: TodoList): void {

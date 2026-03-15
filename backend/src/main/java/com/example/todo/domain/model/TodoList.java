@@ -1,6 +1,5 @@
 package com.example.todo.domain.model;
 
-
 public record TodoList(Long id, String title) {
 
   public TodoList {

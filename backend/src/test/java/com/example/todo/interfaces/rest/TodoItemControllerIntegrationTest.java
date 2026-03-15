@@ -8,8 +8,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.example.todo.infrastructure.persistence.TodoItemSpringDataRepository;
+import com.example.todo.infrastructure.persistence.TodoListSpringDataRepository;
 import java.util.List;
 import java.util.Map;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -29,19 +31,36 @@ class TodoItemControllerIntegrationTest {
 
   @Autowired private TodoItemSpringDataRepository repository;
 
+  @Autowired private TodoListSpringDataRepository listRepository;
+
+  @BeforeEach
+  void cleanDatabase() {
+    repository.deleteAll();
+    listRepository.deleteAll();
+  }
+
+  private Long createList(String title) throws Exception {
+    String body = "{\"title\":\"" + title + "\"}";
+    String createResponse =
+        mockMvc
+            .perform(post("/api/lists").contentType(MediaType.APPLICATION_JSON).content(body))
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+    return objectMapper.readValue(createResponse, TodoListResponse.class).id();
+  }
+
   @Test
   void shouldCreateUpdateListAndDeleteTodoItems() throws Exception {
-    repository.deleteAll();
+    Long listId = createList("Groceries");
 
     String createResponse =
         mockMvc
             .perform(
-                post("/api/todos")
+                post("/api/lists/{listId}/todos", listId)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(
-                        """
-                {"text":"Buy milk"}
-                """))
+                    .content("{\"text\":\"Buy milk\"}"))
             .andExpect(status().isOk())
             .andReturn()
             .getResponse()
@@ -50,28 +69,32 @@ class TodoItemControllerIntegrationTest {
     TodoItemResponse createdItem = objectMapper.readValue(createResponse, TodoItemResponse.class);
     assertThat(createdItem.id()).isNotNull();
     assertThat(createdItem.text()).isEqualTo("Buy milk");
+    assertThat(createdItem.listId()).isEqualTo(listId);
 
     String listResponse =
         mockMvc
-            .perform(get("/api/todos"))
+            .perform(get("/api/lists"))
             .andExpect(status().isOk())
             .andReturn()
             .getResponse()
             .getContentAsString();
 
-    List<TodoItemResponse> listedItems =
-        objectMapper.readValue(listResponse, new TypeReference<>() {});
-    assertThat(listedItems).extracting(TodoItemResponse::text).containsExactly("Buy milk");
+    List<TodoListResponse> listedLists =
+        objectMapper.readValue(listResponse, new TypeReference<List<TodoListResponse>>() {});
+    assertThat(listedLists)
+        .singleElement()
+        .satisfies(
+            list ->
+                assertThat(list.items())
+                    .extracting(TodoItemResponse::text)
+                    .containsExactly("Buy milk"));
 
     String updateResponse =
         mockMvc
             .perform(
-                put("/api/todos/{id}", createdItem.id())
+                put("/api/lists/{listId}/todos/{id}", listId, createdItem.id())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(
-                        """
-                {"text":"Buy oat milk"}
-                """))
+                    .content("{\"text\":\"Buy oat milk\"}"))
             .andExpect(status().isOk())
             .andReturn()
             .getResponse()
@@ -80,22 +103,27 @@ class TodoItemControllerIntegrationTest {
     TodoItemResponse updatedItem = objectMapper.readValue(updateResponse, TodoItemResponse.class);
     assertThat(updatedItem.text()).isEqualTo("Buy oat milk");
 
-    mockMvc.perform(delete("/api/todos/{id}", createdItem.id())).andExpect(status().isOk());
+    mockMvc
+        .perform(delete("/api/lists/{listId}/todos/{id}", listId, createdItem.id()))
+        .andExpect(status().isOk());
 
     assertThat(repository.count()).isZero();
   }
 
   @Test
   void shouldReturnNotFoundForUnknownTodo() throws Exception {
+    Long listId = createList("Groceries");
+
     String errorResponse =
         mockMvc
-            .perform(delete("/api/todos/{id}", 999))
+            .perform(delete("/api/lists/{listId}/todos/{id}", listId, 999))
             .andExpect(status().isNotFound())
             .andReturn()
             .getResponse()
             .getContentAsString();
 
-    Map<String, String> error = objectMapper.readValue(errorResponse, new TypeReference<>() {});
+    Map<String, String> error =
+        objectMapper.readValue(errorResponse, new TypeReference<Map<String, String>>() {});
     assertThat(error).containsEntry("message", "Todo item 999 was not found");
   }
 }

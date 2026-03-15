@@ -3,20 +3,16 @@ package com.example.todo.application;
 import com.example.todo.domain.model.TodoItem;
 import com.example.todo.domain.repository.TodoItemRepository;
 import com.example.todo.domain.repository.TodoListRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@RequiredArgsConstructor
 public class TodoItemService {
 
   private final TodoItemRepository todoItemRepository;
   private final TodoListRepository todoListRepository;
-
-  public TodoItemService(
-      TodoItemRepository todoItemRepository, TodoListRepository todoListRepository) {
-    this.todoItemRepository = todoItemRepository;
-    this.todoListRepository = todoListRepository;
-  }
 
   @Transactional
   public TodoItem create(Long listId, String text) {

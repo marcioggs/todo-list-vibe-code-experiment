@@ -6,9 +6,16 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "todo_items")
+@Getter
+@Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class TodoItemJpaEntity {
 
   @Id
@@ -20,28 +27,4 @@ public class TodoItemJpaEntity {
 
   @Column(name = "list_id", nullable = false)
   private Long listId;
-
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
-  }
-
-  public String getText() {
-    return text;
-  }
-
-  public void setText(String text) {
-    this.text = text;
-  }
-
-  public Long getListId() {
-    return listId;
-  }
-
-  public void setListId(Long listId) {
-    this.listId = listId;
-  }
 }

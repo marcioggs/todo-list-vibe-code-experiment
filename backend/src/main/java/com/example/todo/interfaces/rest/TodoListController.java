@@ -6,6 +6,7 @@ import com.example.todo.application.TodoListWithItems;
 import com.example.todo.domain.model.TodoItem;
 import jakarta.validation.Valid;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,15 +18,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/lists")
+@RequiredArgsConstructor
 public class TodoListController {
 
   private final TodoListService todoListService;
   private final TodoItemService todoItemService;
-
-  public TodoListController(TodoListService todoListService, TodoItemService todoItemService) {
-    this.todoListService = todoListService;
-    this.todoItemService = todoItemService;
-  }
 
   @GetMapping
   public List<TodoListResponse> findAll() {

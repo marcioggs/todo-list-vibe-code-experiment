@@ -8,20 +8,16 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@RequiredArgsConstructor
 public class TodoListService {
 
   private final TodoListRepository todoListRepository;
   private final TodoItemRepository todoItemRepository;
-
-  public TodoListService(
-      TodoListRepository todoListRepository, TodoItemRepository todoItemRepository) {
-    this.todoListRepository = todoListRepository;
-    this.todoItemRepository = todoItemRepository;
-  }
 
   @Transactional(readOnly = true)
   public List<TodoListWithItems> findAll() {

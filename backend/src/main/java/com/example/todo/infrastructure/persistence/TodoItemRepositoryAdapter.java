@@ -4,16 +4,14 @@ import com.example.todo.domain.model.TodoItem;
 import com.example.todo.domain.repository.TodoItemRepository;
 import java.util.List;
 import java.util.Optional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 @Repository
+@RequiredArgsConstructor
 public class TodoItemRepositoryAdapter implements TodoItemRepository {
 
   private final TodoItemSpringDataRepository repository;
-
-  public TodoItemRepositoryAdapter(TodoItemSpringDataRepository repository) {
-    this.repository = repository;
-  }
 
   @Override
   public List<TodoItem> findAllByListIdOrderById(Long listId) {

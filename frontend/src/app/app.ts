@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -18,14 +18,6 @@ export class App {
 
   constructor() {
     this.store.load();
-    effect(() => {
-      const createdId = this.store.lastCreatedListId();
-      if (!createdId) {
-        return;
-      }
-      this.router.navigate([createdId]);
-      this.store.resetLastCreatedListId();
-    });
   }
 
   protected createList(): void {

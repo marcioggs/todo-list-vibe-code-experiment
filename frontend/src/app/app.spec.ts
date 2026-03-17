@@ -13,8 +13,6 @@ const todoStoreStub = {
   selectedItems: signal([]),
   loading: signal(false),
   error: signal(''),
-  lastCreatedListId: signal<number | null>(null),
-  resetLastCreatedListId: vi.fn(),
   load: vi.fn(),
   createList: vi.fn(),
   selectList: vi.fn(),
@@ -35,7 +33,6 @@ describe('App', () => {
     todoStoreStub.add.mockReset();
     todoStoreStub.update.mockReset();
     todoStoreStub.remove.mockReset();
-    todoStoreStub.resetLastCreatedListId.mockReset();
 
     await TestBed.configureTestingModule({
       imports: [App, RouterTestingModule.withRoutes([])],

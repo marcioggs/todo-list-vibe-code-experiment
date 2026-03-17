@@ -1,4 +1,5 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
 import { TodoApiService } from './todo-api.service';
 import { TodoItem } from './todo-item.model';
@@ -7,13 +8,13 @@ import { TodoList } from './todo-list.model';
 @Injectable({ providedIn: 'root' })
 export class TodoStoreService {
   private readonly todoApiService = inject(TodoApiService);
+  private readonly router = inject(Router);
 
   readonly lists = signal<TodoList[]>([]);
   readonly selectedListId = signal<number | null>(null);
   readonly loading = signal(false);
   readonly error = signal('');
   readonly selectedListTitle = signal('');
-  readonly lastCreatedListId = signal<number | null>(null);
 
   readonly selectedList = computed(() =>
     this.lists().find((list) => list.id === this.selectedListId()) ?? null
@@ -64,8 +65,8 @@ export class TodoStoreService {
       .subscribe({
         next: (list) => {
           this.lists.update((lists) => [...lists, list]);
-          this.lastCreatedListId.set(list.id);
           this.selectList(list.id);
+          this.router.navigate([list.id]);
         },
         error: () => this.error.set('Could not create the list.')
       });
@@ -176,10 +177,6 @@ export class TodoStoreService {
         },
         error: () => this.error.set('Could not remove the TODO item.')
       });
-  }
-
-  resetLastCreatedListId(): void {
-    this.lastCreatedListId.set(null);
   }
 
   private updateListState(updated: TodoList): void {

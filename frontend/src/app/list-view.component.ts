@@ -1,7 +1,14 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, effect, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  inject,
+  linkedSignal,
+  signal
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Params, Router } from '@angular/router';
+import { ActivatedRoute, Params } from '@angular/router';
 import { TodoStoreService } from './todo-store.service';
 
 @Component({
@@ -12,13 +19,16 @@ import { TodoStoreService } from './todo-store.service';
 export class ListViewComponent {
   protected readonly store = inject(TodoStoreService);
   protected readonly newItemText = signal('');
-  protected readonly editingId = signal<number | null>(null);
-  protected readonly editingText = signal('');
-
-  private readonly router = inject(Router);
+  protected readonly editingId = linkedSignal<number | null>(() => {
+    this.store.selectedListId();
+    return null;
+  });
+  protected readonly editingText = linkedSignal(() => {
+    this.store.selectedListId();
+    return '';
+  });
   private readonly route = inject(ActivatedRoute);
   private readonly destroyRef = inject(DestroyRef);
-  private selectionRequested = false;
 
   constructor() {
     const paramSubscription = this.route.params.subscribe((params: Params) => {
@@ -30,25 +40,11 @@ export class ListViewComponent {
       if (!Number.isInteger(listId)) {
         return;
       }
-      this.selectionRequested = true;
       this.store.selectList(listId);
       this.cancelEdit();
     });
     this.destroyRef.onDestroy(() => paramSubscription.unsubscribe());
 
-    effect(() => {
-      if (!this.selectionRequested) {
-        return;
-      }
-      if (this.store.selectedListId() === null) {
-        this.router.navigate(['']);
-      }
-    });
-
-    effect(() => {
-      this.store.selectedListId();
-      this.cancelEdit();
-    });
   }
 
   protected addItem(): void {
